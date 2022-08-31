@@ -25,9 +25,6 @@ on:
       namespace:
         required: true
         type: string
-      staging-registry-name:
-        required: true
-        type: string
       manifests:
         required: true
         type: string

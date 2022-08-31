@@ -1,0 +1,73 @@
+on:
+  workflow_call:
+    inputs:
+      client-id:
+        required: true
+        type: string
+      tenant-id:
+        required: true
+        type: string
+      subscription-id:
+        required: true
+        type: string
+      cluster-resource-group:
+        required: true
+        type: string
+      cluster-name:
+        required: true
+        type: string
+      app-name:
+        required: true
+        type: string
+      docker-tag:
+        required: true
+        type: string
+      namespace:
+        required: true
+        type: string
+      staging-registry-name:
+        required: true
+        type: string
+      manifests:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: azure login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ inputs.client-id }}
+          tenant-id: ${{ inputs.tenant-id }}
+          subscription-id: ${{ inputs.subscription-id }}
+      - run: |
+          sudo az aks install-cli
+          az aks get-credentials --resource-group ${{ inputs.cluster-resource-group }} --name ${{ inputs.cluster-name }}
+          kubelogin convert-kubeconfig -l workloadidentity
+          IDTOKEN=$(curl -sSL -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" -H "Accept: application/json; api-version=2.0" -H "Content-Type: application/json" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r '.value')
+          echo $IDTOKEN > ${RUNNER_TEMP}/.token
+          jwtd() {
+           if [[ -x $(command -v jq) ]]; then
+               jq -R 'split(".") | .[0],.[1] | @base64d | fromjson' <<< "${1}"
+               echo "Signature: $(echo "${1}" | awk -F'.' '{print $3}')"
+           fi
+          }
+          jwtd $IDTOKEN
+          echo "::set-output name=idToken::${IDTOKEN}"
+      - uses: azure/k8s-deploy@v1
+        env:
+          AZURE_AUTHORITY_HOST: https://login.microsoftonline.com/
+          AZURE_CLIENT_ID: ${{ inputs.client-id }}
+          AZURE_TENANT_ID: ${{ inputs.tenant-id }}
+          AZURE_FEDERATED_TOKEN_FILE: ${{runner.temp}}/.token
+        with:
+          manifests: ${{ inputs.manifests }}
+          images: |
+            ${{ inputs.docker-tag }}
+          imagepullsecrets: |
+            ${{ inputs.app-name }}-cr-1
+          namespace: ${{ inputs.namespace }}
+

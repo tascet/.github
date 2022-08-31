@@ -1,0 +1,13 @@
+{
+  "name": "Tascet CI Workflow",
+  "description": "Tascet CI starter workflow.",
+  "iconName": "example-icon",
+  "categories": [
+    "Go"
+  ],
+  "filePatterns": [
+    "package.json$",
+    "^Dockerfile",
+    ".*\\.md$"
+  ]
+}

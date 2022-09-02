@@ -55,6 +55,7 @@ jobs:
           }
           jwtd $IDTOKEN
           echo "::set-output name=idToken::${IDTOKEN}"
+          echo "KUBECONFIG=$KUBECONFIG" >> $GITHUB_ENV
       - uses: azure/k8s-deploy@v1
         env:
           AZURE_AUTHORITY_HOST: https://login.microsoftonline.com/

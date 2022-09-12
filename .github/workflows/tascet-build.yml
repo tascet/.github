@@ -28,6 +28,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      docker-tag: ${{ steps.build.outputs.docker-tag }}
     steps:
       - uses: actions/checkout@v3
       - name: azure login
@@ -38,8 +40,6 @@ jobs:
           subscription-id: ${{ inputs.subscription-id }}
       - name: Docker build and publish
         id: build
-        outputs:
-          docker-tag: ${{ steps.build.outputs.docker-tag }}
         run: |
           az acr login -n ${{ inputs.staging-registry-name }} --subscription ${{ inputs.subscription-id }}
           docker build ${{ inputs.docker-build-args }} -t ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} .

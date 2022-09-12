@@ -31,7 +31,7 @@ jobs:
     outputs:
       docker-tag
         description: "The docker tag"
-        value: : ${{ steps.build.outputs.docker-tag }}
+        value: ${{ steps.build.outputs.docker-tag }}
     steps:
       - uses: actions/checkout@v3
       - name: azure login

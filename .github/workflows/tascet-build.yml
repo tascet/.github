@@ -1,5 +1,9 @@
 on:
   workflow_call:
+    outputs:
+      docker-tag:
+        description: "The docker tag"
+        value: ${{ jobs.build.outputs.docker-tag }}
     inputs:
       client-id:
         required: true
@@ -28,9 +32,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      docker-tag:
-        description: "The docker tag"
     steps:
       - uses: actions/checkout@v3
       - name: azure login

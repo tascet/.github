@@ -45,7 +45,7 @@ jobs:
       - name: Docker build and publish
         id: build
         run: |
-          DOCKER_TAG_OUTPUT="docker-tag::${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}"
+          DOCKER_TAG_OUTPUT="${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}"
           echo "::set-output name=docker-tag::$DOCKER_TAG_OUTPUT"
 #          az acr login -n ${{ inputs.staging-registry-name }} --subscription ${{ inputs.subscription-id }}
 #          docker build ${{ inputs.docker-build-args }} -t ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} .

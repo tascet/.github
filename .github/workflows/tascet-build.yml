@@ -32,6 +32,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      docker-tag: ${{ steps.build.outputs.docker-tag }}
     steps:
       - uses: actions/checkout@v3
       - name: azure login

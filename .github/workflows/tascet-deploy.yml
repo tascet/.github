@@ -77,7 +77,7 @@ jobs:
       - if: ${{ inputs.kservicemanifestpath != '' }}
         run: |
           export IMAGE=scstaging.azurecr.io/tascet-web-ui-client-admin:f0fda9e3274cd4c837b5b505d3627064118b30a0
-          envsubst < manifests/clientadminkservice.yaml > manifests/_clientadminkservice.yaml
+          envsubst < ${{ inputs.kservicemanifestpath }} > _${{ inputs.kservicemanifestpath }}
       - if: ${{ inputs.kservicemanifestpath != '' }}
         uses: azure/k8s-deploy@v1
         env:
@@ -86,7 +86,7 @@ jobs:
           AZURE_TENANT_ID: ${{ inputs.tenant-id }}
           AZURE_FEDERATED_TOKEN_FILE: ${{runner.temp}}/.token
         with:
-          manifests: ${{ inputs.kservicemanifestpath }}
+          manifests: _${{ inputs.kservicemanifestpath }}
           images: |
             ${{ inputs.docker-tag }}
           imagepullsecrets: |

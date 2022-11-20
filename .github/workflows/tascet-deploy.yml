@@ -89,6 +89,6 @@ jobs:
           manifests: ${{ inputs.kservicemanifestpath }}
           images: |
             ${{ inputs.docker-tag }}
-          imagepullsecrets: |
-            ${{ inputs.app-name }}-cr-1
+          #imagepullsecrets: |
+          #  ${{ inputs.app-name }}-cr-1
           namespace: ${{ inputs.namespace }}

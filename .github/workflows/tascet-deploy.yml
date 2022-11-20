@@ -87,8 +87,8 @@ jobs:
           AZURE_FEDERATED_TOKEN_FILE: ${{runner.temp}}/.token
         with:
           manifests: ${{ inputs.kservicemanifestpath }}
-          images: |
-            ${{ inputs.docker-tag }}
+#           images: |
+#             ${{ inputs.docker-tag }}
           #imagepullsecrets: |
           #  ${{ inputs.app-name }}-cr-1
           namespace: ${{ inputs.namespace }}

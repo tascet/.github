@@ -90,7 +90,7 @@ jobs:
           AZURE_TENANT_ID: ${{ inputs.tenant-id }}
           AZURE_FEDERATED_TOKEN_FILE: ${{runner.temp}}/.token
         with:
-          manifests: $HOME/kservice.yaml
+          manifests: ~/kservice.yaml
           images: |
             ${{ inputs.docker-tag }}
           imagepullsecrets: |

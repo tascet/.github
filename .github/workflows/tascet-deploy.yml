@@ -59,7 +59,7 @@ jobs:
           jwtd $IDTOKEN
           echo "::set-output name=idToken::${IDTOKEN}"
           echo "KUBECONFIG=$KUBECONFIG" >> $GITHUB_ENV
-      - uses: azure/k8s-deploy@v1
+      - uses: azure/k8s-deploy@v4
         if: ${{ inputs.manifests != '' }}
         env:
           AZURE_AUTHORITY_HOST: https://login.microsoftonline.com/
@@ -73,7 +73,6 @@ jobs:
           imagepullsecrets: |
             ${{ inputs.app-name }}-cr-1
           namespace: ${{ inputs.namespace }}
-
       - if: ${{ inputs.kservicemanifestpath != '' }}
         run: |
           export IMAGE=scstaging.azurecr.io/tascet-web-ui-client-admin:f0fda9e3274cd4c837b5b505d3627064118b30a0
@@ -84,7 +83,7 @@ jobs:
           exit 1
           fi
       - if: ${{ inputs.kservicemanifestpath != '' }}
-        uses: azure/k8s-deploy@v1
+        uses: azure/k8s-deploy@v4
         env:
           AZURE_AUTHORITY_HOST: https://login.microsoftonline.com/
           AZURE_CLIENT_ID: ${{ inputs.client-id }}
@@ -92,8 +91,8 @@ jobs:
           AZURE_FEDERATED_TOKEN_FILE: ${{runner.temp}}/.token
         with:
           manifests: ${{ inputs.kservicemanifestpath }}
-#           images: |
-#             ${{ inputs.docker-tag }}
-          #imagepullsecrets: |
-          #  ${{ inputs.app-name }}-cr-1
+          images: |
+            ${{ inputs.docker-tag }}
+          imagepullsecrets: |
+           ${{ inputs.app-name }}-cr-1
           namespace: ${{ inputs.namespace }}

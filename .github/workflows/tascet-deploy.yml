@@ -79,6 +79,8 @@ jobs:
           export IMAGE=scstaging.azurecr.io/tascet-web-ui-client-admin:f0fda9e3274cd4c837b5b505d3627064118b30a0
           envsubst < ${{ inputs.kservicemanifestpath }} > ${{ inputs.kservicemanifestpath }}
           if [[ -s ${{ inputs.kservicemanifestpath }} ]]; then
+          status="knative yaml service empty"
+          echo ::set-output name=status::$status
           exit 1
           fi
       - if: ${{ inputs.kservicemanifestpath != '' }}

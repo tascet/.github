@@ -79,7 +79,7 @@ jobs:
           export IMAGE=scstaging.azurecr.io/tascet-web-ui-client-admin:f0fda9e3274cd4c837b5b505d3627064118b30a0
           envsubst < ${{ inputs.kservicemanifestpath }} > ${{ inputs.kservicemanifestpath }}
           if [ -s ${{ inputs.kservicemanifestpath }} ]; then
-          exit(-1)
+          exit 1
           fi
       - if: ${{ inputs.kservicemanifestpath != '' }}
         uses: azure/k8s-deploy@v1

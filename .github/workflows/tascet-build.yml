@@ -1,8 +1,14 @@
 on:
   workflow_call:
     outputs:
+      docker-image-tag:
+        description: "Just the image tag e.g. app:abcd1234sha1"
+        value: ${{ jobs.build.outputs.docker-image-tag }}
+      docker-full-image-tag:
+        description: "The full image tag tag e.g. scstaging.azurecr.io/app:abcd1234sha1"
+        value: ${{ jobs.build.outputs.docker-full-image-tag }}
       docker-tag:
-        description: "The docker tag"
+        description: "DEPRECATED, is the full docker image tag"
         value: ${{ jobs.build.outputs.docker-tag }}
     inputs:
       client-id:
@@ -33,7 +39,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      docker-tag: ${{ steps.build.outputs.docker-tag }}
+      docker-tag: ${{ steps.build.outputs.docker-image-tag }}
     steps:
       - uses: actions/checkout@v3
       - name: azure login
@@ -50,6 +56,10 @@ jobs:
           docker push ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }}
           docker tag ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}
           docker push ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}
-          DOCKER_TAG_OUTPUT="${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}"
-          echo "::set-output name=docker-tag::$DOCKER_TAG_OUTPUT"
+          DOCKER_IMAGE_TAG_OUTPUT="${{ inputs.app-name }}:${{ github.sha }}"
+          DOCKER_FULL_IMAGE_TAG_OUTPUT="${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}"
+
+          echo "docker-image-tag=$DOCKER_IMAGE_TAG_OUTPUT" >> $GITHUB_STATE
+          echo "docker-full-image-tag=$DOCKER_FULL_IMAGE_TAG_OUTPUT" >> $GITHUB_STATE
+          echo "docker-tag=$DOCKER_FULL_IMAGE_TAG_OUTPUT" >> $GITHUB_STATE
 

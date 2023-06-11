@@ -87,3 +87,7 @@ jobs:
           imagepullsecrets: |
            ${{ inputs.app-name }}-cr-1
           namespace: ${{ inputs.namespace }}
+      - name: import image from a registry in the same subscription
+        if: ${{ inputs.docker-tag != '' }}
+        run: |
+          az acr import --name scuscenpr --source ${{ inputs.docker-tag }} 

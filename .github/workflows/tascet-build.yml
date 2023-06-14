@@ -42,6 +42,8 @@ jobs:
           client-id: ${{ inputs.client-id }}
           tenant-id: ${{ inputs.tenant-id }}
           subscription-id: ${{ inputs.subscription-id }}
+      - name: Set current date as env variable
+        run: echo "NOW=$(date '+%Y%m%d%H%M%S%3N')" >> $GITHUB_ENV
       - name: Docker build and publish
         id: build
         run: |
@@ -50,5 +52,7 @@ jobs:
           docker push ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }}
           docker tag ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}
           docker push ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}
-          DOCKER_TAG_OUTPUT="${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }}"
+          docker tag ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}
+          docker push ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}
+          DOCKER_TAG_OUTPUT="${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}"
           echo "docker-tag=$DOCKER_TAG_OUTPUT" >> $GITHUB_OUTPUT

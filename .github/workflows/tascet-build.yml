@@ -14,7 +14,7 @@ on:
       subscription-id:
         required: true
         type: string
-      staging-registry-name:
+      scuscennp-registry-name:
         required: true
         type: string
       app-name:
@@ -47,12 +47,12 @@ jobs:
       - name: Docker build and publish
         id: build
         run: |
-          az acr login -n ${{ inputs.staging-registry-name }} --subscription ${{ inputs.subscription-id }}
-          docker build ${{ inputs.docker-build-args }} -t ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} .
-          docker push ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }}
-          docker tag ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}
-          docker push ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}
-          docker tag ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}
-          docker push ${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}
-          DOCKER_TAG_OUTPUT="${{ inputs.staging-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}"
+          az acr login -n ${{ inputs.scuscennp-registry-name }} --subscription ${{ inputs.subscription-id }}
+          docker build ${{ inputs.docker-build-args }} -t ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} .
+          docker push ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }}
+          docker tag ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}
+          docker push ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${{ github.sha }}
+          docker tag ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ github.sha }} ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}
+          docker push ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}
+          DOCKER_TAG_OUTPUT="${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}"
           echo "docker-tag=$DOCKER_TAG_OUTPUT" >> $GITHUB_OUTPUT

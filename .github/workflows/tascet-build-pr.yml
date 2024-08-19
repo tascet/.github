@@ -1,49 +1,51 @@
 on:
-    workflow_call:
-      outputs:
-        docker-tag:
-          description: "The docker tag"
-          value: ${{ jobs.build.outputs.docker-tag }}
-      inputs:
-        client-id:
-          required: true
-          type: string
-        tenant-id:
-          required: true
-          type: string
-        subscription-id:
-          required: true
-          type: string
-        scuscennp-registry-name:
-          required: true
-          type: string
-        app-name:
-          required: true
-          type: string
-        docker-build-args:
-          required: false
-          type: string
-          default: ""
-  
-  jobs:
-    build:
-      runs-on: ubuntu-latest
-      outputs:
-        docker-tag: ${{ steps.build.outputs.docker-tag }}
-      steps:
-        - uses: actions/checkout@v3
-        - name: azure login
-          uses: azure/login@v1
-          with:
-            client-id: ${{ inputs.client-id }}
-            tenant-id: ${{ inputs.tenant-id }}
-            subscription-id: ${{ inputs.subscription-id }}
-        - name: Set current date as env variable
-          run: echo "NOW=$(date '+%Y%m%d%H%M%S%3N')" >> $GITHUB_ENV
-        - name: Docker build and publish
-          id: build
-          run: |
-            az acr login -n ${{ inputs.scuscennp-registry-name }} --subscription ${{ inputs.subscription-id }}
-            docker build ${{ inputs.docker-build-args }} -t ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }} .
+  workflow_call:
+    outputs:
+      docker-tag:
+        description: "The docker tag"
+        value: ${{ jobs.build.outputs.docker-tag }}
+    inputs:
+      client-id:
+        required: true
+        type: string
+      tenant-id:
+        required: true
+        type: string
+      subscription-id:
+        required: true
+        type: string
+      scuscennp-registry-name:
+        required: true
+        type: string
+      app-name:
+        required: true
+        type: string
+      docker-build-args:
+        required: false
+        type: string
+        default: ""
 
-  
+#    secrets:
+#      envPAT:
+#        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      docker-tag: ${{ steps.build.outputs.docker-tag }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: azure login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ inputs.client-id }}
+          tenant-id: ${{ inputs.tenant-id }}
+          subscription-id: ${{ inputs.subscription-id }}
+      - name: Set current date as env variable
+        run: echo "NOW=$(date '+%Y%m%d%H%M%S%3N')" >> $GITHUB_ENV
+      - name: Docker build and publish
+        id: build
+        run: |
+          az acr login -n ${{ inputs.scuscennp-registry-name }} --subscription ${{ inputs.subscription-id }}
+          docker build ${{ inputs.docker-build-args }} -t ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }} .

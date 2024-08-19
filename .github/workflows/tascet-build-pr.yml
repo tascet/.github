@@ -44,7 +44,7 @@ jobs:
           subscription-id: ${{ inputs.subscription-id }}
       - name: Set current date as env variable
         run: echo "NOW=$(date '+%Y%m%d%H%M%S%3N')" >> $GITHUB_ENV
-      - name: Docker build and publish
+      - name: Docker build
         id: build
         run: |
           az acr login -n ${{ inputs.scuscennp-registry-name }} --subscription ${{ inputs.subscription-id }}

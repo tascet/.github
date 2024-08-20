@@ -47,5 +47,4 @@ jobs:
       - name: Docker build
         id: build
         run: |
-          az acr login -n ${{ inputs.scuscennp-registry-name }} --subscription ${{ inputs.subscription-id }}
           docker build ${{ inputs.docker-build-args }} -t ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }} .

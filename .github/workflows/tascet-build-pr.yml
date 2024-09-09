@@ -42,9 +42,14 @@ jobs:
       #     client-id: ${{ inputs.client-id }}
       #     tenant-id: ${{ inputs.tenant-id }}
       #     subscription-id: ${{ inputs.subscription-id }}
+      - name: Set up environment
+        run: |
+          echo "OPENTOK_API_KEY=${{ secrets.OPENTOK_API_KEY }}" >> $GITHUB_ENV
+          echo "OPENTOK_API_SECRET=${{ secrets.OPENTOK_API_SECRET }}" >> $GITHUB_ENV
+
       - name: Set current date as env variable
         run: echo "NOW=$(date '+%Y%m%d%H%M%S%3N')" >> $GITHUB_ENV
       - name: Docker build
         id: build
         run: |
-          docker build ${{ inputs.docker-build-args }} -t ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }} .
+          docker build --build-arg activeProfile=test --build-arg OPENTOK_API_KEY=${{ env.OPENTOK_API_KEY }} --build-arg OPENTOK_API_SECRET=${{ env.OPENTOK_API_SECRET }} ${{ inputs.docker-build-args }} -t ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }} .

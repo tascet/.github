@@ -29,6 +29,12 @@ on:
 #      envPAT:
 #        required: true
 
+    secrets:
+      OPENTOK_API_KEY:
+        required: false
+      OPENTOK_API_SECRET:
+        required: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -48,7 +54,7 @@ jobs:
         id: build
         run: |
           az acr login -n ${{ inputs.scuscennp-registry-name }} --subscription ${{ inputs.subscription-id }}
-          docker build ${{ inputs.docker-build-args }} -t ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }} .
+          docker build --build-arg OPENTOK_API_KEY=${{ secrets.OPENTOK_API_KEY }} --build-arg OPENTOK_API_SECRET=${{ secrets.OPENTOK_API_SECRET }} ${{ inputs.docker-build-args }} -t ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }} .
           docker push ${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}
           DOCKER_TAG_OUTPUT="${{ inputs.scuscennp-registry-name }}.azurecr.io/${{ inputs.app-name }}:${GITHUB_REF##*/}-${{ env.NOW }}"
           echo "docker-tag=$DOCKER_TAG_OUTPUT" >> $GITHUB_OUTPUT

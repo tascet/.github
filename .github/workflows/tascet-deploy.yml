@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: azure login
-        uses: azure/login@v1
+        uses: azure/login@v2.2.0
         with:
           client-id: ${{ inputs.client-id }}
           tenant-id: ${{ inputs.tenant-id }}
